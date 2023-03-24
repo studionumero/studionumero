@@ -1,5 +1,4 @@
-const getMessages = ({ messages, setMessages, setFormData, formData }: any) => {
-
+const getMessages = ({ messages, setMessages, setButtons, setFormData, formData }: any) => {
   switch (true) {
     case (messages.length === 0):
       setMessages((currValue: any) => ([
@@ -7,16 +6,16 @@ const getMessages = ({ messages, setMessages, setFormData, formData }: any) => {
         {
           type: "bubble",
           text: "Hi, how can I help you?"
-        },
+        }
+      ]));
+      setButtons(() => ([
         {
           type: "button",
           text: "Contact the Numero team",
           onClick: () => {
-            setMessages(() => ([
-              ...[{
-                type: "bubble",
-                text: "Hi, how can I help you?"
-              }],
+            setButtons([]);
+            setMessages((currValue: any) => ([
+              ...currValue,
               {
                 type: "bubble",
                 text: "Contact the Numero team",
@@ -31,25 +30,21 @@ const getMessages = ({ messages, setMessages, setFormData, formData }: any) => {
                 text: `Let me fill a contact form for you.\nFirst, can I get your full name please?`
               }
             ]));
-            // setContact(true);
-            setFormData({...formData, toggle: true});
+            setFormData({ ...formData, toggle: true });
           }
         },
         {
           type: "button",
           text: "???",
           onClick: () => {
-            setMessages(() => ([
-              ...[{
-                type: "bubble",
-                text: "Hi, how can I help you?"
-              }],
+            setButtons([]);
+            setMessages((currValue: any) => ([
+              ...currValue,
               {
                 type: "bubble",
                 text: "01010101"
               }
             ]));
-
           }
         }
       ]));
@@ -65,16 +60,16 @@ const getMessages = ({ messages, setMessages, setFormData, formData }: any) => {
         {
           type: "bubble",
           text: `Thank you, ${formData.name}. Did I get your name correct?`
-        },
+        }
+      ]));
+      setButtons(() => ([
         {
           type: "button",
           text: "Yes",
           onClick: () => {
-            setMessages(() => ([
-              ...[{
-                type: "bubble",
-                text: "Hi, how can I help you?"
-              }],
+            setButtons([]);
+            setMessages((currValue: any) => ([
+              ...currValue,
               {
                 type: "bubble",
                 text: "Yes",
@@ -87,20 +82,24 @@ const getMessages = ({ messages, setMessages, setFormData, formData }: any) => {
           type: "button",
           text: "No",
           onClick: () => {
-            setMessages(() => ([
-              ...[{
-                type: "bubble",
-                text: "Hi, how can I help you?"
-              }],
+            setButtons([]);
+            setMessages((currValue: any) => ([
+              ...currValue,
               {
                 type: "bubble",
                 text: "No",
                 classname: "self-end"
               },
-            ]))
+              {
+                type: "bubble",
+                text: "Oh, I'm sorry! Could you please enter your name again?",
+              },
+            ]));
+            setFormData({ ...formData, name: "" });
           }
         },
-      ]));
+      ]))
+      setFormData({ ...formData, toggle: false });
       break;
     case (formData.toggle && formData.email !== ""):
       setMessages((currValue: any) => ([

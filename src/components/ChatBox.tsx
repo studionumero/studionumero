@@ -6,6 +6,11 @@ interface Message {
   type: string;
   text: string;
   classname?: string;
+}
+
+interface Button {
+  type: string;
+  text: string;
   onClick?: React.MouseEventHandler;
 }
 
@@ -18,11 +23,13 @@ const ChatBox = () => {
     toggle: false
   });
 
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [buttons, setButtons] = useState<Button[]>([]);
 
-  useMemo(() => getMessages({ messages, setMessages, setFormData, formData }), [formData]);
+  useMemo(() => getMessages({ messages, setMessages, setButtons, setFormData, formData }), [formData]);
 
   console.log(messages);
+  console.log(buttons);
 
   // const [showContactChoice, setShowContactChoice] = useState(true);
 
@@ -46,6 +53,7 @@ const ChatBox = () => {
     <section className="relative border-2 border-black px-4 flex flex-col bg-slate-100 w-[600px] h-96">
       <div className="flex flex-col h-80 space-y-4 overflow-y-scroll">
         {messagesMap({ messages })}
+        <ButtonWrapper>{buttonsMap({ buttons })}</ButtonWrapper>
         <div ref={scrollRef} />
       </div>
       <ChatBar />
@@ -59,23 +67,38 @@ const ChatBox = () => {
 }
 
 const messagesMap = ({ messages }: any) => {
+  const Bubble = ({ text, classname }: any) => (
+    <div className={`whitespace-pre rounded-3xl flex w-max p-4 bg-black text-white ${classname}`}>
+      {text}
+    </div>
+  );
+
   return messages.map((item: any, index: number) => {
+    return <Bubble
+      classname={item.classname}
+      key={index}
+      text={item.text}
+    />;
+  });
+}
 
-    if (item.type === "bubble") {
-      return <Bubble
-        classname={item.classname}
-        key={index}
-        text={item.text}
-      />
-    } else if (item.type === "button") {
-      return <Button
-        onClick={item.onClick}
-        key={index}
-        text={item.text}
-      />
-    }
+const buttonsMap = ({ buttons }: any) => {
+  const Button = ({ text, onClick }: any) => (
+    <button
+      onClick={onClick}
+      className="flex border-2 border-black rounded-3xl p-4 w-max"
+    >
+      {text}
+    </button>
+  );
 
-  })
+  return buttons.map((item: any, index: number) => {
+    return <Button
+      onClick={item.onClick}
+      key={index}
+      text={item.text}
+    />;
+  });
 }
 
 const ChatBar = () => (
@@ -112,21 +135,6 @@ const Form = ({ formData, setFormData, submitRef }: any) => {
     </form>
   ); else return <></>;
 }
-
-const Bubble = ({ text, classname }: any) => (
-  <div className={`whitespace-pre rounded-3xl flex w-max p-4 bg-black text-white ${classname}`}>
-    {text}
-  </div>
-);
-
-const Button = ({ text, onClick }: any) => (
-  <button
-    onClick={onClick}
-    className="flex border-2 border-black rounded-3xl p-4 w-max"
-  >
-    {text}
-  </button>
-);
 
 const ButtonWrapper = ({ children }: any) => (
   <div className="flex flex-row space-x-4 items-center self-center">
