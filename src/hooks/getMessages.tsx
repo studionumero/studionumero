@@ -13,7 +13,6 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
           type: "button",
           text: "Contact the Numero team",
           onClick: () => {
-            setButtons([]);
             setMessages((currValue: any) => ([
               ...currValue,
               {
@@ -31,13 +30,13 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
               }
             ]));
             setFormData({ ...formData, toggle: true });
+            setButtons([]);
           }
         },
         {
           type: "button",
           text: "???",
           onClick: () => {
-            setButtons([]);
             setMessages((currValue: any) => ([
               ...currValue,
               {
@@ -45,11 +44,12 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
                 text: "01010101"
               }
             ]));
+            setButtons([]);
           }
         }
       ]));
       break;
-    case (formData.toggle && formData.name !== ""):
+    case (formData.toggle && formData.name !== "" && formData.email == ""):
       setMessages((currValue: any) => ([
         ...currValue,
         {
@@ -67,7 +67,6 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
           type: "button",
           text: "Yes",
           onClick: () => {
-            setButtons([]);
             setMessages((currValue: any) => ([
               ...currValue,
               {
@@ -75,14 +74,18 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
                 text: "Yes",
                 classname: "self-end"
               },
-            ]))
+              {
+                type: "bubble",
+                text: "Great, now please tell me your email address",
+              },
+            ]));
+            setButtons([]);
           }
         },
         {
           type: "button",
           text: "No",
           onClick: () => {
-            setButtons([]);
             setMessages((currValue: any) => ([
               ...currValue,
               {
@@ -96,12 +99,12 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
               },
             ]));
             setFormData({ ...formData, name: "" });
+            setButtons([]);
           }
         },
-      ]))
-      setFormData({ ...formData, toggle: false });
+      ]));
       break;
-    case (formData.toggle && formData.email !== ""):
+    case (formData.toggle && formData.name !== "" && formData.email !== "" && formData.message == ""):
       setMessages((currValue: any) => ([
         ...currValue,
         {
@@ -111,11 +114,185 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         },
         {
           type: "bubble",
-          text: "Woah, that's a cool name!"
+          text: `Thank you. ${formData.email}. Did I get your email address correct?`
+        }
+      ]));
+      setButtons(() => ([
+        {
+          type: "button",
+          text: "Yes",
+          onClick: () => {
+            setMessages((currValue: any) => ([
+              ...currValue,
+              {
+                type: "bubble",
+                text: "Yes",
+                classname: "self-end"
+              },
+              {
+                type: "bubble",
+                text: "Awesome, would you like to leave a message?",
+              },
+            ]));
+            setButtons(() => ([
+              {
+                type: "button",
+                text: "Yes",
+                onClick: () => {
+                  setMessages((currValue: any) => ([
+                    ...currValue,
+                    {
+                      type: "bubble",
+                      text: "Yes",
+                      classname: "self-end"
+                    },
+                    {
+                      type: "bubble",
+                      text: "Please share what you would like to send",
+                    },
+                  ]));
+                  setButtons([]);
+                }
+              },
+              {
+                type: "button",
+                text: "No",
+                onClick: () => {
+                  setMessages((currValue: any) => ([
+                    ...currValue,
+                    {
+                      type: "bubble",
+                      text: "No",
+                      classname: "self-end"
+                    },
+                    {
+                      type: "bubble",
+                      text: "Thank you for your input",
+                    },
+                    {
+                      type: "bubble",
+                      text: `Name: ${formData.name}\nEmail: ${formData.email}\nIs this correct?`,
+                    },
+                  ]));
+                  setButtons(() => ([
+                    {
+                      type: "button",
+                      text: "Yes",
+                      onClick: () => {
+                        setMessages((currValue: any) => ([
+                          ...currValue,
+                          {
+                            type: "bubble",
+                            text: "Yes",
+                            classname: "self-end"
+                          },
+                          {
+                            type: "bubble",
+                            text: "Your message has been sent, thanks for reaching out!",
+                          },
+                        ]));
+                        setButtons([]);
+                      }
+                    },
+                    {
+                      type: "button",
+                      text: "No",
+                      onClick: () => {
+                        setMessages((currValue: any) => ([
+                          ...currValue,
+                          {
+                            type: "bubble",
+                            text: "No",
+                            classname: "self-end"
+                          },
+                          {
+                            type: "bubble",
+                            text: "Oh, I'm sorry! Please tell me where the issue is:",
+                          }
+                        ]));
+                        setButtons([]);
+                      }
+                    },
+                  ]));
+                }
+              },
+            ]));
+          }
+        },
+        {
+          type: "button",
+          text: "No",
+          onClick: () => {
+            setMessages((currValue: any) => ([
+              ...currValue,
+              {
+                type: "bubble",
+                text: "No",
+                classname: "self-end"
+              },
+              {
+                type: "bubble",
+                text: "Oh, I'm sorry! Could you please enter your email again?",
+              },
+            ]));
+            setFormData({ ...formData, email: "" });
+            setButtons([]);
+          }
+        },
+      ]));
+      break;
+    case (formData.toggle && formData.name !== "" && formData.email !== "" && formData.message !== ""):
+      setMessages((currValue: any) => ([
+        ...currValue,
+        {
+          type: "bubble",
+          text: formData.message,
+          classname: "self-end"
         },
         {
           type: "bubble",
-          text: "What's your email?"
+          text: `Thank you. ${formData.email}. Did I get your email address correct?`
+        }
+      ]));
+      setButtons(() => ([
+        {
+          type: "button",
+          text: "Yes",
+          onClick: () => {
+            setMessages((currValue: any) => ([
+              ...currValue,
+              {
+                type: "bubble",
+                text: "Yes",
+                classname: "self-end"
+              },
+              {
+                type: "bubble",
+                text: "Awesome, would you like to leave a message?",
+              },
+            ]));
+            setButtons([]);
+          }
+        },
+        {
+          type: "button",
+          text: "No",
+          onClick: () => {
+            setMessages((currValue: any) => ([
+              ...currValue,
+              {
+                type: "bubble",
+                text: "No",
+                classname: "self-end"
+              },
+              {
+                type: "bubble",
+                text: "Oh, I'm sorry! Could you please enter your email again?",
+              },
+            ]));
+            setFormData({ ...formData, email: "" });
+            setButtons([]);
+          }
         },
       ]));
       break;
