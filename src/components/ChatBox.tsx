@@ -1,59 +1,42 @@
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, Fragment } from "react";
 import { getMessages } from "../hooks/getMessages";
+import { Message, Button } from "../interfaces/ChatBox";
 import emailjs from '@emailjs/browser';
 
-interface Message {
-  type: string;
-  text: string;
-  classname?: string;
-}
-
-interface Button {
-  type: string;
-  text: string;
-  onClick?: React.MouseEventHandler;
-}
-
 const ChatBox = () => {
+  const scrollRef = useRef<null | HTMLDivElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [buttons, setButtons] = useState<Button[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
     status: "",
-    toggle: false
+    toggle: false,
+    loop: false,
+    loopProp: "",
   });
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [buttons, setButtons] = useState<Button[]>([]);
-
-  useMemo(() => getMessages({ messages, setMessages, setButtons, setFormData, formData }), [formData]);
-
-  console.log(messages);
-  console.log(buttons);
-
-  // const [showContactChoice, setShowContactChoice] = useState(true);
-
-  // const [showMessage, setShowMessage] = useState(false);
-  // const [showMessageChoice, setShowMessageChoice] = useState(true);
-
-  // const [success, setSuccess] = useState(false);
-  // const [showSuccessChoice, setShowSuccessChoice] = useState(true);
-
-
-  const scrollRef = useRef<null | HTMLDivElement>(null);
-  const submitRef = useRef<HTMLButtonElement>(null);
-
-  const scrollToBottom = () => scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  useMemo(() =>
+    getMessages({ messages, setMessages, setButtons, setFormData, formData }),
+    [formData]);
 
   useEffect(() => {
-    scrollToBottom()
+    const scrollToBottom = () => scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollToBottom();
   }, [messages, formData]);
 
   return (
-    <section className="relative border-2 border-black px-4 flex flex-col bg-slate-100 w-[600px] h-96">
+    <section
+      className="relative flex flex-col
+      w-[600px] h-96 px-4 
+      bg-slate-100 border-2 border-black"
+    >
       <div className="flex flex-col h-80 space-y-4 overflow-y-scroll">
         {messagesMap({ messages })}
-        <ButtonWrapper>{buttonsMap({ buttons })}</ButtonWrapper>
+        {buttonsMap({ buttons })}
         <div ref={scrollRef} />
       </div>
       <ChatBar />
@@ -67,43 +50,41 @@ const ChatBox = () => {
 }
 
 const messagesMap = ({ messages }: any) => {
-  const Bubble = ({ text, classname }: any) => (
-    <div className={`whitespace-pre rounded-3xl flex w-max p-4 bg-black text-white ${classname}`}>
-      {text}
-    </div>
-  );
-
   return messages.map((item: any, index: number) => {
-    return <Bubble
-      classname={item.classname}
-      key={index}
-      text={item.text}
-    />;
-  });
-}
+    return (
+      <div
+        key={index}
+        className={`whitespace-pre rounded-3xl flex w-max 
+          p-4 bg-black text-white ${item.classname}`}
+      >
+        {item.text}
+      </div>
+    )
+  })
+};
 
-const buttonsMap = ({ buttons }: any) => {
-  const Button = ({ text, onClick }: any) => (
-    <button
-      onClick={onClick}
-      className="flex border-2 border-black rounded-3xl p-4 w-max"
-    >
-      {text}
-    </button>
-  );
-
-  return buttons.map((item: any, index: number) => {
-    return <Button
-      onClick={item.onClick}
-      key={index}
-      text={item.text}
-    />;
-  });
-}
+const buttonsMap = ({ buttons }: any) => (
+  <div className="flex flex-row space-x-4 items-center self-center">
+    {buttons.map((item: any, index: number) => {
+      return (
+        <button
+          className="flex border-2 border-black rounded-3xl p-4 w-max"
+          onClick={item.onClick}
+          key={index}
+        >
+          {item.text}
+        </button>
+      )
+    })}
+  </div>
+);
 
 const ChatBar = () => (
-  <div className="absolute bottom-0 right-0 bg-black w-[calc(100%-32px)] h-14 z-0 rounded-3xl mx-4" />
-)
+  <div className="absolute bottom-0 right-0 
+    bg-black w-[calc(100%-32px)] h-14 z-0 
+    rounded-3xl mx-4"
+  />
+);
 
 const Form = ({ formData, setFormData, submitRef }: any) => {
   const [input, setInput] = useState("");
@@ -127,20 +108,20 @@ const Form = ({ formData, setFormData, submitRef }: any) => {
 
   if (formData.toggle) return (
     <form
-      className="absolute w-[calc(100%-32px)] bg-transparent bottom-0 right-0 h-14 items-center mx-4"
+      className="absolute w-[calc(100%-32px)] h-14 
+        bg-transparent bottom-0 right-0 
+        items-center mx-4"
       onSubmit={sendEmail}
     >
       {inputSwitch({ input, setInput, formData, setFormData })}
-      <button ref={submitRef} type="submit" style={{ display: 'none' }} />
+      <button
+        ref={submitRef}
+        type="submit"
+        style={{ display: 'none' }}
+      />
     </form>
-  ); else return <></>;
+  ); else return <Fragment />;
 }
-
-const ButtonWrapper = ({ children }: any) => (
-  <div className="flex flex-row space-x-4 items-center self-center">
-    {children}
-  </div>
-);
 
 const inputSwitch = ({ input, setInput, formData, setFormData }: any) => {
   switch (true) {
@@ -198,76 +179,4 @@ const Input = ({ placeholder, propertyAssign, type, input, setFormData, setInput
   />
 );
 
-// prompt user
-// user enters response
-// validate response
-// if unvalid, notify user, else, accept response
-
-// repeat X times
-
-// on final validation, send responses to email
-// ask user "Do you want to chat again?"
-
-// if user selects 'emoji' send corresponding message
-
 export { ChatBox }
-
-{/*         
-        <Bubble text="Hi!" />
-        <Bubble text="How can I help you?" />
-
-        {showContactChoice &&
-          <ButtonWrapper>
-            <Button onClick={() => { setContact(true); setShowContactChoice(false) }} text="Contact" />
-            <Button text="???" />
-          </ButtonWrapper>
-        }
-
-        {contact && <>
-          <Bubble text="Contact" classname="self-end" />
-          <Bubble text="What's your full name?" />
-        </>}
-
-        {data.name && <>
-          <Bubble text={data.name} classname="self-end" />
-          <Bubble text="Woah, that's a cool name!" />
-          <Bubble text="What's your email?" />
-        </>}
-
-        {data.email && <>
-          <Bubble text={data.email} classname="self-end" />
-          <Bubble text="Do you want to leave a message?" />
-        </>}
-
-        {data.email && showMessageChoice &&
-          <ButtonWrapper>
-            <Button onClick={() => { setShowMessage(true); setShowMessageChoice(false) }} text="Yes" />
-            <Button text="No" />
-          </ButtonWrapper>
-        }
-
-        {showMessage && <>
-          <Bubble text="Yes" classname="self-end" />
-          <Bubble text="Awesome! What's your message?" />
-        </>}
-
-        {data.message && <Bubble text={data.message} classname="self-end" />}
-
-        {data.name && data.email && data.message && <>
-          <Bubble text="Okay, let's see if I have this right.." />
-          <Bubble text={`Name: ${data.name} \nEmail: ${data.email} \nMessage: ${data.message}`} />
-          <Bubble text="Is that correct?" />
-
-        </>}
-
-        {data.name && data.email && data.message && showSuccessChoice &&
-          <ButtonWrapper>
-            <Button onClick={() => { setSuccess(true); setShowSuccessChoice(false); submitRef?.current?.click() }} text="Yes" />
-            <Button text="No" />
-          </ButtonWrapper>
-        }
-
-        {success && <Bubble text="Yes" classname="self-end" />}
-
-        {success && status === "SUCCESS" && <Bubble text="The form has been submitted successfully!" />}
-        {success && status === "" && <Bubble text="There seems to have been an error" />} */}
