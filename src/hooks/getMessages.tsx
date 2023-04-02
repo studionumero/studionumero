@@ -1,5 +1,21 @@
 const getMessages = ({ messages, setMessages, setButtons, setFormData, formData }: any) => {
 
+  const response = ({ text }: any) => {
+    const obj = {
+      user: {
+        type: "bubble",
+        text: text,
+        classname: "self-end"
+      },
+      zero: {
+        type: "bubble",
+        text: text
+      }
+    }
+
+    return obj;
+  }
+
   const button = {
     contact: {
       type: "button",
@@ -7,19 +23,9 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
       onClick: () => {
         setMessages((currValue: any) => ([
           ...currValue,
-          {
-            type: "bubble",
-            text: "Contact the Numero team",
-            classname: "self-end"
-          },
-          {
-            type: "bubble",
-            text: "Got you!"
-          },
-          {
-            type: "bubble",
-            text: `Let me fill a contact form for you.\nFirst, can I get your full name please?`
-          }
+          response({ text: "Contact the Numero team" }).user,
+          response({ text: "Got you!" }).zero,
+          response({ text: `Let me fill a contact form for you.\nFirst, can I get your full name please?` }).zero
         ]));
         setFormData({ ...formData, toggle: true });
         setButtons([]);
@@ -31,10 +37,7 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
       onClick: () => {
         setMessages((currValue: any) => ([
           ...currValue,
-          {
-            type: "bubble",
-            text: "01010101"
-          }
+          response({ text: "01010101" }).zero
         ]));
         setButtons([]);
       }
@@ -46,11 +49,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.yes,
-            {
-              type: "bubble",
-              text: "Great, now please tell me your email address",
-            },
+            response({ text: "Yes" }).user,
+            response({ text: "Great, now please tell me your email address" }).zero
           ]));
           setButtons([]);
         }
@@ -61,11 +61,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.no,
-            {
-              type: "bubble",
-              text: "Oh, I'm sorry! Could you please enter your name again?",
-            },
+            response({ text: "No" }).user,
+            response({ text: "Oh, I'm sorry! Could you please enter your name again?" }).zero
           ]));
           setFormData({ ...formData, name: "" });
           setButtons([]);
@@ -79,11 +76,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.yes,
-            {
-              type: "bubble",
-              text: "Awesome, would you like to leave a message?",
-            },
+            response({ text: "Yes" }).user,
+            response({ text: "Awesome, would you like to leave a message?" }).zero
           ]));
           setButtons(() => ([
             button.message.yes,
@@ -97,11 +91,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.no,
-            {
-              type: "bubble",
-              text: "Oh, I'm sorry! Could you please enter your email again?",
-            },
+            response({ text: "No" }).user,
+            response({ text: "Oh, I'm sorry! Could you please enter your email again?" }).zero
           ]));
           setFormData({ ...formData, email: "" });
           setButtons([]);
@@ -115,11 +106,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.yes,
-            {
-              type: "bubble",
-              text: "Please share what you would like to send",
-            },
+            response({ text: "Yes" }).user,
+            response({ text: "Please share what you would like to send" }).zero
           ]));
           setButtons([]);
         }
@@ -130,15 +118,9 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.no,
-            {
-              type: "bubble",
-              text: "Thank you for your input",
-            },
-            {
-              type: "bubble",
-              text: `Name: ${formData.name}\nEmail: ${formData.email}\nIs this correct?`,
-            },
+            response({ text: "No" }).user,
+            response({ text: "Thank you for your input" }).zero,
+            response({ text: `Name: ${formData.name}\nEmail: ${formData.email}\nIs this correct?` }).zero
           ]));
           setButtons(() => ([
             button.form.yes,
@@ -154,11 +136,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.yes,
-            {
-              type: "bubble",
-              text: "Your message has been sent, thanks for reaching out!",
-            },
+            response({ text: "Yes" }).user,
+            response({ text: "Your message has been sent, thanks for reaching out!" }).zero
           ]));
           setButtons([]);
         }
@@ -169,11 +148,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         onClick: () => {
           setMessages((currValue: any) => ([
             ...currValue,
-            userResponse.no,
-            {
-              type: "bubble",
-              text: "Oh, I'm sorry! Please tell me where the issue is:",
-            }
+            response({ text: "No" }).user,
+            response({ text: "Oh, I'm sorry! Please tell me where the issue is:" }).zero
           ]));
           setButtons([]);
         }
@@ -188,10 +164,7 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
       case (messages.length === 0):
         setMessages((currValue: any) => ([
           ...currValue,
-          {
-            type: "bubble",
-            text: "Hi, how can I help you?"
-          }
+          response({ text: "Hi, how can I help you?" }).zero
         ]));
         setButtons(() => ([
           button.contact,
@@ -199,20 +172,13 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         ]));
         break;
       case (formData.toggle && formData.name === ""):
-        
+
         break;
       case (formData.toggle && formData.name !== ""):
         setMessages((currValue: any) => ([
           ...currValue,
-          {
-            type: "bubble",
-            text: formData.name,
-            classname: "self-end"
-          },
-          {
-            type: "bubble",
-            text: `Thank you, ${formData.name}. Did I get your name correct?`
-          }
+          response({ text: formData.name }).user,
+          response({ text: `Thank you, ${formData.name}. Did I get your name correct?` }).zero
         ]));
         setButtons(() => ([
           button.name.yes,
@@ -224,15 +190,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
       case (formData.toggle && formData.email !== ""):
         setMessages((currValue: any) => ([
           ...currValue,
-          {
-            type: "bubble",
-            text: formData.email,
-            classname: "self-end"
-          },
-          {
-            type: "bubble",
-            text: `Thank you. ${formData.email}\nDid I get your email address correct?`
-          }
+          response({ text: formData.email }).user,
+          response({ text: `Thank you. ${formData.email}\nDid I get your email address correct?` }).zero
         ]));
         setButtons(() => ([
           button.email.yes,
@@ -242,32 +201,11 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
       case (formData.toggle && formData.name !== "" && formData.email !== "" && formData.message !== ""):
         setMessages((currValue: any) => ([
           ...currValue,
-          {
-            type: "bubble",
-            text: formData.message,
-            classname: "self-end"
-          },
-          {
-            type: "bubble",
-            text: `${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?`
-          }
+          response({ text: formData.message }).user,
+          response({ text: `${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          {
-            type: "button",
-            text: "Yes",
-            onClick: () => {
-              setMessages((currValue: any) => ([
-                ...currValue,
-                userResponse.yes,
-                {
-                  type: "bubble",
-                  text: "Your message has been sent!\nThank you for reaching out to us :)",
-                },
-              ]));
-              setButtons([]);
-            }
-          },
+          button.form.yes,
           {
             type: "button",
             text: "No",
@@ -279,16 +217,14 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
         return messages;
     }
   }
+  // Loop
   else if (formData.loop === true) {
     switch (true) {
       case (formData.name !== "" && formData.email !== "" && formData.message !== ""):
         setMessages((currValue: any) => ([
           ...currValue,
-          userResponse.no,
-          {
-            type: "bubble",
-            text: "Oh, I'm sorry! Please tell me where the issue is",
-          },
+          response({ text: "No" }).user,
+          response({ text: "Oh, I'm sorry! Please tell me where the issue is" }).zero
         ]));
         setButtons([
           {
@@ -297,15 +233,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
             onClick: () => {
               setMessages((currValue: any) => ([
                 ...currValue,
-                {
-                  type: "bubble",
-                  text: "Name",
-                  classname: "self-end"
-                },
-                {
-                  type: "bubble",
-                  text: "Got it. Let's change your name. Please reenter your name",
-                },
+                response({ text: "Name" }).user,
+                response({ text: "Got it. Let's change your name. Please reenter your name" }).zero
               ]));
               setFormData({ ...formData, name: "" });
               setButtons([]);
@@ -317,15 +246,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
             onClick: () => {
               setMessages((currValue: any) => ([
                 ...currValue,
-                {
-                  type: "bubble",
-                  text: "Email",
-                  classname: "self-end"
-                },
-                {
-                  type: "bubble",
-                  text: "Got it. Let's change your email. Please reenter your email",
-                },
+                response({ text: "Email" }).user,
+                response({ text: "Got it. Let's change your email. Please reenter your email" }).zero
               ]));
               setFormData({ ...formData, email: "" });
               setButtons([]);
@@ -337,15 +259,8 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
             onClick: () => {
               setMessages((currValue: any) => ([
                 ...currValue,
-                {
-                  type: "bubble",
-                  text: "Message",
-                  classname: "self-end"
-                },
-                {
-                  type: "bubble",
-                  text: "Got it. Let's change your message. Please reenter your message",
-                },
+                response({ text: "Message" }).user,
+                response({ text: "Got it. Let's change your message. Please reenter your message" }).zero
               ]));
               setFormData({ ...formData, message: "" });
               setButtons([]);
@@ -356,64 +271,28 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
       case (formData.name === ""):
         setMessages((currValue: any) => ([
           ...currValue,
-          {
-            type: "bubble",
-            text: formData.name,
-            classname: "self-end"
-          },
-          {
-            type: "bubble",
-            text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?`
-          }
+          response({ text: formData.name }).user,
+          response({ text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          {
-            type: "button",
-            text: "Yes",
-            onClick: () => {
-              setMessages((currValue: any) => ([
-                ...currValue,
-                userResponse.yes,
-                {
-                  type: "bubble",
-                  text: "Your message has been sent!\nThank you for reaching out to us :)",
-                },
-              ]));
-              setButtons([]);
-            }
-          },
+          button.form.yes,
           {
             type: "button",
             text: "No",
             onClick: () => {
               setMessages((currValue: any) => ([
                 ...currValue,
-                userResponse.no,
+                response({ text: "No" }).user,
               ]));
               setButtons([]);
             }
           }
         ]));
         break;
-      default:
-
+      default: 
+        return messages;
     }
   }
 }
-
-const userResponse = {
-  yes: {
-    type: "bubble",
-    text: "Yes",
-    classname: "self-end"
-  },
-  no: {
-    type: "bubble",
-    text: "No",
-    classname: "self-end"
-  }
-};
-
-
 
 export { getMessages }
