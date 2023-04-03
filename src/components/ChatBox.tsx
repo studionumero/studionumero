@@ -35,7 +35,7 @@ const ChatBox = () => {
       bg-slate-100 border-2 border-black"
     >
       <div className="flex flex-col h-80 space-y-4 overflow-y-scroll">
-        {messagesMap({ messages })}
+        {MessagesMap({ messages })}
         {buttonsMap({ buttons })}
         <div ref={scrollRef} />
       </div>
@@ -49,15 +49,90 @@ const ChatBox = () => {
   )
 }
 
-const messagesMap = ({ messages }: any) => {
+const MessagesMap = ({ messages }: any) => {
+
+  setTimeout(() => {
+    const bubble = document.getElementById('bubble');
+    if (bubble !== null) {
+      bubble.classList.add('opacity-0');
+
+    
+
+      bubble.addEventListener('transitionend', function (e) {
+        bubble.style.display = 'none';
+      }, {
+        capture: false,
+        once: true,
+        passive: false
+      });
+    }
+
+  }, 2000);
+
+  setTimeout(() => {
+    const message = document.getElementById('message');
+    const style = document.querySelector('.transition');
+
+    if (message !== null && style !== null) {
+      message.classList.remove('hidden');
+      style.classList.toggle('change');
+
+      // message.classList.add('change');
+    }
+  }, 100)
+
+  // useEffect(() => {
+
+  //   setTimeout(() => {
+  //     const message = document.getElementById('message');
+
+  //     if (message !== null) {
+  //       message.classList.remove('hidden');
+  //       message.classList.add('change');
+  //     }
+  //   }, 150)
+
+
+  // }, [messages])
+
+
+
+  // }, 1000)
+
+  const Bubble = () => (
+    <div id="bubble"
+      className="typing-indicator absolute whitespace-pre rounded-3xl flex w-max 
+      p-4 bg-black text-white transition-all"
+    >
+      <span />
+      <span />
+      <span />
+    </div>
+  );
+
   return messages.map((item: any, index: number) => {
-    return (
-      <div
-        key={index}
-        className={`whitespace-pre rounded-3xl flex w-max 
+    if (item.classname === "self-end") {
+      return (
+        <div
+          key={index}
+          className={`whitespace-pre rounded-3xl flex w-max 
+           p-4 bg-black text-white ${item.classname}`}
+        >
+          <p>{item.text}</p>
+        </div>
+      )
+    } else return (
+      <div className="relative mt-4 w-full h-14">
+        <Bubble />
+        <div
+          key={index}
+          id="message"
+          className={`absolute flex whitespace-pre rounded-3xl 
+          w-max transition hidden
           p-4 bg-black text-white ${item.classname}`}
-      >
-        {item.text}
+        >
+          <p>{item.text}</p>
+        </div>
       </div>
     )
   })
