@@ -1,4 +1,8 @@
-const getMessages = ({ messages, setMessages, setButtons, setFormData, formData }: any) => {
+const getMessages = async ({ messages, setMessages, setButtons, setFormData, formData }: any) => {
+
+  const delay = (ms:number) => new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
 
   const response = ({ text }: any) => {
     const obj = {
@@ -20,15 +24,24 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
     contact: {
       type: "button",
       text: "Contact the Numero team",
-      onClick: () => {
+      onClick: async () => {
+        setFormData({ ...formData, toggle: true, status: "name" });
+        setButtons([]);
         setMessages((currValue: any) => ([
           ...currValue,
           response({ text: "Contact the Numero team" }).user,
+        ]));
+        await delay(500);
+        setMessages((currValue: any) => ([
+          ...currValue,  
           response({ text: "Got you!" }).zero,
+        ]));
+        await delay(1000);
+        setMessages((currValue: any) => ([
+          ...currValue,  
           response({ text: `Let me fill a contact form for you.\nFirst, can I get your full name please?` }).zero
         ]));
-        setFormData({ ...formData, toggle: true, status: "name" });
-        setButtons([]);
+   
       }
     },
     question: {
@@ -176,6 +189,7 @@ const getMessages = ({ messages, setMessages, setButtons, setFormData, formData 
           ...currValue,
           response({ text: "Hi, how can I help you?" }).zero
         ]));
+        await delay(2000);
         setButtons(() => ([
           button.contact,
           button.question

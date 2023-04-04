@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useMemo, Fragment } from "react";
 import { getMessages } from "../hooks/getMessages";
+import { ChatTransition } from "../hooks/useChatTransition";
 import { Message, Button } from "../interfaces/ChatBox";
 import emailjs from '@emailjs/browser';
 
@@ -19,6 +20,8 @@ const ChatBox = () => {
     loopProp: "",
   });
 
+  console.log(messages);
+
   useMemo(() =>
     getMessages({ messages, setMessages, setButtons, setFormData, formData }),
     [formData]);
@@ -35,8 +38,8 @@ const ChatBox = () => {
       bg-slate-100 border-2 border-black"
     >
       <div className="flex flex-col h-80 space-y-4 overflow-y-scroll">
-        {MessagesMap({ messages })}
-        {buttonsMap({ buttons })}
+        <MessagesMap messages={messages} />
+        <ButtonsMap buttons={buttons} />
         <div ref={scrollRef} />
       </div>
       <ChatBar />
@@ -50,58 +53,17 @@ const ChatBox = () => {
 }
 
 const MessagesMap = ({ messages }: any) => {
+  const bubbleRef = useRef(null);
+  const messageRef = useRef(null);
 
-  setTimeout(() => {
-    const bubble = document.getElementById('bubble');
-    if (bubble !== null) {
-      bubble.classList.add('opacity-0');
-
-    
-
-      bubble.addEventListener('transitionend', function (e) {
-        bubble.style.display = 'none';
-      }, {
-        capture: false,
-        once: true,
-        passive: false
-      });
-    }
-
-  }, 2000);
-
-  setTimeout(() => {
-    const message = document.getElementById('message');
-    const style = document.querySelector('.transition');
-
-    if (message !== null && style !== null) {
-      message.classList.remove('hidden');
-      style.classList.toggle('change');
-
-      // message.classList.add('change');
-    }
-  }, 100)
-
-  // useEffect(() => {
-
-  //   setTimeout(() => {
-  //     const message = document.getElementById('message');
-
-  //     if (message !== null) {
-  //       message.classList.remove('hidden');
-  //       message.classList.add('change');
-  //     }
-  //   }, 150)
-
-
-  // }, [messages])
-
-
-
-  // }, 1000)
+  useEffect(() => {
+    ChatTransition({ bubbleRef, messageRef });
+  })
 
   const Bubble = () => (
-    <div id="bubble"
-      className="typing-indicator absolute whitespace-pre rounded-3xl flex w-max 
+    <div
+      ref={bubbleRef}
+      className="typing-indicator whitespace-pre rounded-3xl flex w-max 
       p-4 bg-black text-white transition-all"
     >
       <span />
@@ -115,35 +77,41 @@ const MessagesMap = ({ messages }: any) => {
       return (
         <div
           key={index}
-          className={`whitespace-pre rounded-3xl flex w-max 
+          className={`rounded-3xl flex w-max 
+          transition-opacity ease-in duration-300
            p-4 bg-black text-white ${item.classname}`}
         >
           <p>{item.text}</p>
         </div>
       )
     } else return (
-      <div className="relative mt-4 w-full h-14">
+      <div key={index} className="flex mt-4 h-14 overflow-visible">
+        {/* <div className="relative"> */}
         <Bubble />
         <div
-          key={index}
-          id="message"
-          className={`absolute flex whitespace-pre rounded-3xl 
-          w-max transition hidden
+          ref={messageRef}
+          className={`whitespace-pre rounded-3xl 
+          w-max 
+          hidden transition
           p-4 bg-black text-white ${item.classname}`}
         >
           <p>{item.text}</p>
         </div>
+        {/* </div> */}
       </div>
     )
   })
 };
 
-const buttonsMap = ({ buttons }: any) => (
+const ButtonsMap = ({ buttons }: any) => (
   <div className="flex flex-row space-x-4 items-center self-center">
     {buttons.map((item: any, index: number) => {
       return (
         <button
-          className="flex border-2 border-black rounded-3xl p-4 w-max"
+          className="flex 
+          border-2 border-black rounded-3xl 
+          p-4 w-max 
+          transition-opacity ease-in-out duration-200"
           onClick={item.onClick}
           key={index}
         >

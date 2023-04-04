@@ -12,6 +12,7 @@ code {
     monospace;
 }
 
+/* TYPING TRANSITION */
 .transition {
   opacity: 0;
   background-color: black;
@@ -19,7 +20,7 @@ code {
 
 .transition.change {
   opacity: 1;
-  transition: all 1s;
+  transition: ease-in 1s;
 }
 
 /* TYPING INDICATOR */
@@ -52,12 +53,6 @@ code {
 @keyframes blink {
   50% {
     opacity: 1;
-  }
-}
-
-@keyframes bulge {
-  50% {
-    transform: scale(1.05);
   }
 }
 
