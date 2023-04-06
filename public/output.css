@@ -579,6 +579,10 @@ video {
   z-index: 0;
 }
 
+.m-0 {
+  margin: 0px;
+}
+
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -610,6 +614,11 @@ video {
 
 .h-96 {
   height: 24rem;
+}
+
+.h-min {
+  height: -webkit-min-content;
+  height: min-content;
 }
 
 .w-\[600px\] {
@@ -661,16 +670,8 @@ video {
   align-self: center;
 }
 
-.overflow-hidden {
-  overflow: hidden;
-}
-
 .overflow-visible {
   overflow: visible;
-}
-
-.overflow-scroll {
-  overflow: scroll;
 }
 
 .overflow-y-scroll {
@@ -749,10 +750,6 @@ video {
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
-}
-
-.duration-100 {
-  transition-duration: 100ms;
 }
 
 .duration-200 {

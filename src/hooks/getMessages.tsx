@@ -1,8 +1,48 @@
+import { GetMessagesButtonProps } from "../interfaces/ChatBox"
+
 const getMessages = async ({ messages, setMessages, setButtons, setFormData, formData }: any) => {
 
-  const delay = (ms:number) => new Promise(
+  const delay = (ms: number) => new Promise(
     resolve => setTimeout(resolve, ms)
   );
+
+  const Button = ({ text, reply, options, formProps }: GetMessagesButtonProps) => {
+    const obj = {
+      type: "button",
+      text: text,
+      onClick: async () => {
+        // Clear previous buttons
+        setButtons([]);
+        // Set user response [confirms choice]
+        setMessages((currValue: any) => ([
+          ...currValue,
+          response({ text: text }).user,
+        ]));
+        await delay(500);
+        // Set zero response
+        setMessages((currValue: any) => ([
+          ...currValue,
+          response({ text: reply }).zero
+        ]));
+        // Set new buttons if applicable
+        if (options) {
+          await delay(1000);
+          setButtons(() => ([...options]))
+        }
+        // Set formData if applicable
+        setFormData({ ...formProps })
+      }
+    }
+
+    return obj;
+  }
+
+  const messageSentButton = () => {
+    return Button({
+      text: "Yes",
+      reply: "Your message has been sent, thanks for reaching out!"
+    })
+  }
 
   const response = ({ text }: any) => {
     const obj = {
@@ -20,168 +60,6 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
     return obj;
   }
 
-  const button = {
-    contact: {
-      type: "button",
-      text: "Contact the Numero team",
-      onClick: async () => {
-        setFormData({ ...formData, toggle: true, status: "name" });
-        setButtons([]);
-        setMessages((currValue: any) => ([
-          ...currValue,
-          response({ text: "Contact the Numero team" }).user,
-        ]));
-        await delay(500);
-        setMessages((currValue: any) => ([
-          ...currValue,  
-          response({ text: "Got you!" }).zero,
-        ]));
-        await delay(1000);
-        setMessages((currValue: any) => ([
-          ...currValue,  
-          response({ text: `Let me fill a contact form for you.\nFirst, can I get your full name please?` }).zero
-        ]));
-   
-      }
-    },
-    question: {
-      type: "button",
-      text: "???",
-      onClick: () => {
-        setMessages((currValue: any) => ([
-          ...currValue,
-          response({ text: "01010101" }).zero
-        ]));
-        setButtons([]);
-      }
-    },
-    name: {
-      yes: {
-        type: "button",
-        text: "Yes",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "Yes" }).user,
-            response({ text: "Great, now please tell me your email address" }).zero
-          ]));
-          setButtons([]);
-          setFormData({ ...formData, status: "email" });
-        }
-      },
-      no: {
-        type: "button",
-        text: "No",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "No" }).user,
-            response({ text: "Oh, I'm sorry! Could you please enter your name again?" }).zero
-          ]));
-          setFormData({ ...formData, name: "" });
-          setButtons([]);
-        }
-      },
-    },
-    email: {
-      yes: {
-        type: "button",
-        text: "Yes",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "Yes" }).user,
-            response({ text: "Awesome, would you like to leave a message?" }).zero
-          ]));
-          setButtons(() => ([
-            button.message.yes,
-            button.message.no
-          ]));
-        }
-      },
-      no: {
-        type: "button",
-        text: "No",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "No" }).user,
-            response({ text: "Oh, I'm sorry! Could you please enter your email again?" }).zero
-          ]));
-          setFormData({ ...formData, email: "" });
-          setButtons([]);
-        }
-      },
-    },
-    message: {
-      yes: {
-        type: "button",
-        text: "Yes",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "Yes" }).user,
-            response({ text: "Please share what you would like to send" }).zero
-          ]));
-          setFormData({ ...formData, status: "message" });
-          setButtons([]);
-        }
-      },
-      no: {
-        type: "button",
-        text: "No",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "No" }).user,
-            response({ text: "Thank you for your input" }).zero,
-            response({ text: `Name: ${formData.name}\nEmail: ${formData.email}\nIs this correct?` }).zero
-          ]));
-          setButtons(() => ([
-            button.form.yes,
-            button.form.no
-          ]));
-        }
-      },
-    },
-    form: {
-      yes: {
-        type: "button",
-        text: "Yes",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "Yes" }).user,
-            response({ text: "Your message has been sent, thanks for reaching out!" }).zero
-          ]));
-          setButtons([]);
-        }
-      },
-      no: {
-        type: "button",
-        text: "No",
-        onClick: () => {
-          setMessages((currValue: any) => ([
-            ...currValue,
-            response({ text: "No" }).user,
-            response({ text: "Oh, I'm sorry! Please tell me where the issue is:" }).zero
-          ]));
-          setButtons([]);
-        }
-      },
-    },
-    loop: {
-      no: {
-        type: "button",
-        text: "No",
-        onClick: () => {
-          setFormData({ ...formData, status: "loop" });
-          setButtons([]);
-        }
-      }
-    }
-  };
-
   if (formData.loop === false) {
     switch (true) {
       case (messages.length === 0):
@@ -191,10 +69,18 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
         ]));
         await delay(2000);
         setButtons(() => ([
-          button.contact,
-          button.question
+          Button({
+            text: "Contact the Numero team",
+            reply: `Let me fill a contact form for you.\nFirst, can I get your full name please?`,
+            formProps: { ...formData, toggle: true, status: "name" }
+          }),
+          Button({
+            text: "???",
+            reply: "01010101"
+          })
         ]));
         break;
+
       // Name
       case (formData.toggle && formData.status === "name" && formData.name !== ""):
         setMessages((currValue: any) => ([
@@ -203,10 +89,19 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
           response({ text: `Thank you, ${formData.name}. Did I get your name correct?` }).zero
         ]));
         setButtons(() => ([
-          button.name.yes,
-          button.name.no
+          Button({
+            text: "Yes",
+            reply: "Great, now please tell me your email address",
+            formProps: { ...formData, status: "email" }
+          }),
+          Button({
+            text: "No",
+            reply: "Oh, I'm sorry! Could you please enter your name again?",
+            formProps: { ...formData, name: "" }
+          })
         ]));
         break;
+
       // Email
       case (formData.toggle && formData.status === "email" && formData.email !== ""):
         setMessages((currValue: any) => ([
@@ -215,10 +110,36 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
           response({ text: `Thank you. ${formData.email}\nDid I get your email address correct?` }).zero
         ]));
         setButtons(() => ([
-          button.email.yes,
-          button.email.no
+          Button({
+            text: "Yes",
+            reply: "Awesome, would you like to leave a message?",
+            options: [
+              Button({
+                text: "Yes",
+                reply: "Please share what you would like to send",
+                formProps: { ...formData, status: "message" }
+              }),
+              // Needs to be updated [not correct logic]
+              Button({
+                text: "No",
+                reply: `Name: ${formData.name}\nEmail: ${formData.email}\nIs this correct?`,
+                options: [
+                  messageSentButton,
+                  Button({
+                    text: "No",
+                    reply: "Oh, I'm sorry! Please tell me where the issue is:"
+                  })]
+              })
+            ]
+          }),
+          Button({
+            text: "No",
+            reply: "Oh, I'm sorry! Could you please enter your email again?",
+            formProps: { ...formData, email: "" }
+          })
         ]));
         break;
+
       // Message
       case (formData.toggle && formData.status === "message" && formData.message !== ""):
         setMessages((currValue: any) => ([
@@ -227,7 +148,8 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
           response({ text: `${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          button.form.yes,
+          messageSentButton,
+          // Don't modify
           {
             type: "button",
             text: "No",
@@ -239,6 +161,7 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
         return messages;
     }
   }
+
   // Loop
   else if (formData.loop === true) {
     switch (true) {
@@ -249,44 +172,24 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
           response({ text: "Oh, I'm sorry! Please tell me where the issue is" }).zero
         ]));
         setButtons([
-          {
-            type: "button",
+          Button({
             text: "Name",
-            onClick: () => {
-              setMessages((currValue: any) => ([
-                ...currValue,
-                response({ text: "Got it. Let's change your name. Please reenter your name" }).zero
-              ]));
-              setFormData({ ...formData, name: "", status: "name" });
-              setButtons([]);
-            }
-          },
-          {
-            type: "button",
+            reply: "Got it. Let's change your name. Please reenter your name",
+            formProps: { ...formData, name: "", status: "name" }
+          }),
+          Button({
             text: "Email",
-            onClick: () => {
-              setMessages((currValue: any) => ([
-                ...currValue,
-                response({ text: "Got it. Let's change your email. Please reenter your email" }).zero
-              ]));
-              setFormData({ ...formData, email: "", status: "email" });
-              setButtons([]);
-            }
-          },
-          {
-            type: "button",
+            reply: "Got it. Let's change your email. Please reenter your email",
+            formProps: { ...formData, email: "", status: "email" }
+          }),
+          Button({
             text: "Message",
-            onClick: () => {
-              setMessages((currValue: any) => ([
-                ...currValue,
-                response({ text: "Got it. Let's change your message. Please reenter your message" }).zero
-              ]));
-              setFormData({ ...formData, message: "", status: "message" });
-              setButtons([]);
-            }
-          },
+            reply: "Got it. Let's change your message. Please reenter your message",
+            formProps: { ...formData, message: "", status: "message" }
+          })
         ]);
         break;
+
       // Name
       case (formData.status === "name" && formData.name !== ""):
         setMessages((currValue: any) => ([
@@ -295,10 +198,14 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
           response({ text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          button.form.yes,
-          button.loop.no
+          messageSentButton,
+          Button({
+            text: "No",
+            formProps: { ...formData, status: "loop" }
+          })
         ]));
         break;
+
       // Email
       case (formData.status === "email" && formData.email !== ""):
         setMessages((currValue: any) => ([
@@ -307,10 +214,14 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
           response({ text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          button.form.yes,
-          button.loop.no
+          messageSentButton,
+          Button({
+            text: "No",
+            formProps: { ...formData, status: "loop" }
+          })
         ]));
         break;
+
       // Message
       case (formData.status === "message" && formData.message !== ""):
         setMessages((currValue: any) => ([
@@ -319,8 +230,11 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
           response({ text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          button.form.yes,
-          button.loop.no
+          messageSentButton,
+          Button({
+            text: "No",
+            formProps: { ...formData, status: "loop" }
+          })
         ]));
         break;
       default:

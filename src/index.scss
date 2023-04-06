@@ -26,6 +26,8 @@ code {
 /* TYPING INDICATOR */
 .typing-indicator {
   will-change: transform;
+  transition: ease-in;
+  transition-duration: 0.05s;
   width: min-content;
   height: auto;
   display: flex;

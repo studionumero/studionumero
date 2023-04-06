@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState, useMemo, Fragment } from "react";
 import { getMessages } from "../hooks/getMessages";
 import { ChatTransition } from "../hooks/useChatTransition";
-import { Message, Button } from "../interfaces/ChatBox";
+import { MessageProps, ButtonProps } from "../interfaces/ChatBox";
 import emailjs from '@emailjs/browser';
 
 const ChatBox = () => {
   const scrollRef = useRef<null | HTMLDivElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [buttons, setButtons] = useState<Button[]>([]);
+  const [messages, setMessages] = useState<MessageProps[]>([]);
+  const [buttons, setButtons] = useState<ButtonProps[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,7 +17,6 @@ const ChatBox = () => {
     status: "",
     toggle: false,
     loop: false,
-    loopProp: "",
   });
 
   console.log(messages);
@@ -53,18 +52,21 @@ const ChatBox = () => {
 }
 
 const MessagesMap = ({ messages }: any) => {
+  
   const bubbleRef = useRef(null);
   const messageRef = useRef(null);
 
   useEffect(() => {
     ChatTransition({ bubbleRef, messageRef });
-  })
+  }, [messages])
 
   const Bubble = () => (
     <div
       ref={bubbleRef}
-      className="typing-indicator whitespace-pre rounded-3xl flex w-max 
-      p-4 bg-black text-white transition-all"
+      className="typing-indicator
+      h-14 w-max 
+      whitespace-pre rounded-3xl flex 
+      p-4 bg-black text-white"
     >
       <span />
       <span />
@@ -85,8 +87,10 @@ const MessagesMap = ({ messages }: any) => {
         </div>
       )
     } else return (
-      <div key={index} className="flex mt-4 h-14 overflow-visible">
-        {/* <div className="relative"> */}
+      <div 
+        key={index} 
+        className={`${index === 0 ? 'mt-4' : 'm-0'} flex h-min overflow-visible`}
+      >
         <Bubble />
         <div
           ref={messageRef}
@@ -97,7 +101,6 @@ const MessagesMap = ({ messages }: any) => {
         >
           <p>{item.text}</p>
         </div>
-        {/* </div> */}
       </div>
     )
   })

@@ -8,8 +8,8 @@ const ChatTransition = ({ bubbleRef, messageRef }: any) => {
 
       bubble.addEventListener('transitionend', () => {
         bubble.style.display = 'none';
-        bubble.classList.add('hidden')!;
-        console.log('hidden')
+        bubble.classList.add('hidden');
+        
         message.classList.remove('hidden');
         message.classList.add('change');
       }, {

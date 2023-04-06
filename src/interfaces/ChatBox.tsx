@@ -1,13 +1,20 @@
-interface Message {
+interface MessageProps {
   type: string;
   text: string;
   classname?: string;
 }
 
-interface Button {
+interface ButtonProps {
   type: string;
   text: string;
   onClick?: React.MouseEventHandler;
 }
 
-export type { Message, Button }
+interface GetMessagesButtonProps {
+  text: string;
+  reply?: string;
+  options?: any;
+  formProps?: any;
+}
+
+export type { MessageProps, ButtonProps, GetMessagesButtonProps }
