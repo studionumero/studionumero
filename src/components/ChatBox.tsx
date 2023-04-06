@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState, useMemo, Fragment } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { Form } from "./ChatForm";
 import { getMessages } from "../hooks/getMessages";
 import { ChatTransition } from "../hooks/useChatTransition";
 import { MessageProps, ButtonProps } from "../interfaces/ChatBox";
-import emailjs from '@emailjs/browser';
 
 const ChatBox = () => {
   const scrollRef = useRef<null | HTMLDivElement>(null);
-  const submitRef = useRef<HTMLButtonElement>(null);
 
   const [messages, setMessages] = useState<MessageProps[]>([]);
   const [buttons, setButtons] = useState<ButtonProps[]>([]);
@@ -41,18 +40,19 @@ const ChatBox = () => {
         <ButtonsMap buttons={buttons} />
         <div ref={scrollRef} />
       </div>
-      <ChatBar />
+      <div className="absolute bottom-0 right-0 
+        bg-black w-[calc(100%-32px)] h-14 z-0 
+        rounded-3xl mx-4"
+      />
       <Form
         formData={formData}
         setFormData={setFormData}
-        submitRef={submitRef}
       />
     </section>
   )
 }
 
 const MessagesMap = ({ messages }: any) => {
-  
   const bubbleRef = useRef(null);
   const messageRef = useRef(null);
 
@@ -60,47 +60,36 @@ const MessagesMap = ({ messages }: any) => {
     ChatTransition({ bubbleRef, messageRef });
   }, [messages])
 
-  const Bubble = () => (
+  const Bubble = ({ children, myRef, classname }: any) => (
     <div
-      ref={bubbleRef}
-      className="typing-indicator
-      h-14 w-max 
-      whitespace-pre rounded-3xl flex 
-      p-4 bg-black text-white"
+      ref={myRef}
+      className={`flex whitespace-pre
+        bg-black text-white
+        w-max p-4 rounded-3xl
+        ${classname}
+      `}
     >
-      <span />
-      <span />
-      <span />
+      {children}
     </div>
-  );
+  )
 
   return messages.map((item: any, index: number) => {
     if (item.classname === "self-end") {
       return (
-        <div
-          key={index}
-          className={`rounded-3xl flex w-max 
-          transition-opacity ease-in duration-300
-           p-4 bg-black text-white ${item.classname}`}
-        >
-          <p>{item.text}</p>
+        <div key={index} className={item.classname}>
+          <Bubble>
+            <p>{item.text}</p>
+          </Bubble>
         </div>
       )
     } else return (
-      <div 
-        key={index} 
-        className={`${index === 0 ? 'mt-4' : 'm-0'} flex h-min overflow-visible`}
-      >
-        <Bubble />
-        <div
-          ref={messageRef}
-          className={`whitespace-pre rounded-3xl 
-          w-max 
-          hidden transition
-          p-4 bg-black text-white ${item.classname}`}
-        >
+      <div key={index}>
+        <Bubble myRef={bubbleRef} classname="h-14 typing-indicator">
+          <span /><span /><span />
+        </Bubble>
+        <Bubble myRef={messageRef} classname={item.classname}>
           <p>{item.text}</p>
-        </div>
+        </Bubble>
       </div>
     )
   })
@@ -123,106 +112,6 @@ const ButtonsMap = ({ buttons }: any) => (
       )
     })}
   </div>
-);
-
-const ChatBar = () => (
-  <div className="absolute bottom-0 right-0 
-    bg-black w-[calc(100%-32px)] h-14 z-0 
-    rounded-3xl mx-4"
-  />
-);
-
-const Form = ({ formData, setFormData, submitRef }: any) => {
-  const [input, setInput] = useState("");
-
-  const sendEmail = (e: any) => {
-    e.preventDefault();
-
-    emailjs.send(
-      process.env.REACT_APP_EMAIL_SERVICE_ID as string,
-      process.env.REACT_APP_EMAIL_TEMPLATE_ID as string,
-      formData,
-      process.env.REACT_APP_EMAIL_PUBLIC_KEY as string
-    )
-      .then(function (response) {
-        console.log('SUCCESS!', response);
-        setFormData((currValue: any) => ({ ...currValue, status: "SUCCESS" }))
-      }, function (error) {
-        console.log('FAILED...', error);
-      });
-  };
-
-  if (formData.toggle) return (
-    <form
-      className="absolute w-[calc(100%-32px)] h-14 
-        bg-transparent bottom-0 right-0 
-        items-center mx-4"
-      onSubmit={sendEmail}
-    >
-      {inputSwitch({ input, setInput, formData, setFormData })}
-      <button
-        ref={submitRef}
-        type="submit"
-        style={{ display: 'none' }}
-      />
-    </form>
-  ); else return <Fragment />;
-}
-
-const inputSwitch = ({ input, setInput, formData, setFormData }: any) => {
-  switch (true) {
-    case (formData.toggle && formData.name === ""):
-      return <Input
-        type="text"
-        placeholder="name"
-        setFormData={setFormData}
-        input={input}
-        setInput={setInput}
-        propertyAssign={{ name: input }}
-      />
-    case (formData.toggle && formData.email === ""):
-      return <Input
-        type="email"
-        placeholder="Email address"
-        setFormData={setFormData}
-        input={input}
-        setInput={setInput}
-        propertyAssign={{ email: input }}
-      />
-    case (formData.toggle && formData.message === ""):
-      return <Input
-        type="text"
-        placeholder="Message"
-        setFormData={setFormData}
-        input={input}
-        setInput={setInput}
-        propertyAssign={{ message: input }}
-      />
-    default:
-      return null;
-  }
-}
-
-const Input = ({ placeholder, propertyAssign, type, input, setFormData, setInput }: any) => (
-  <input
-    type={type}
-    spellCheck="false"
-    placeholder={placeholder}
-    className="bg-transparent outline-none text-white w-full p-4"
-    value={input}
-    onChange={(e) => setInput(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        setFormData((currValue: any) => ({
-          ...currValue,
-          // property name : state
-          ...propertyAssign
-        }))
-        setInput("");
-      }
-    }}
-  />
 );
 
 export { ChatBox }

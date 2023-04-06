@@ -53,7 +53,8 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
       },
       zero: {
         type: "bubble",
-        text: text
+        text: text,
+        classname: "hidden"
       }
     }
 
