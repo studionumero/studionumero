@@ -1,12 +1,12 @@
-import { GetMessagesButtonProps } from "../interfaces/ChatBox"
+import { ChatButtonProps } from "../interfaces/ChatBox"
 
-const getMessages = async ({ messages, setMessages, setButtons, setFormData, formData }: any) => {
+const UseChat = async ({ messages, setMessages, setButtons, setFormData, formData }: any) => {
 
   const delay = (ms: number) => new Promise(
     resolve => setTimeout(resolve, ms)
   );
 
-  const Button = ({ text, reply, options, formProps }: GetMessagesButtonProps) => {
+  const Button = ({ text, reply, options, formProps }: ChatButtonProps) => {
     const obj = {
       type: "button",
       text: text,
@@ -244,4 +244,4 @@ const getMessages = async ({ messages, setMessages, setButtons, setFormData, for
   }
 }
 
-export { getMessages }
+export { UseChat }

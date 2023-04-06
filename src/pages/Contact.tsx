@@ -1,4 +1,4 @@
-import { ChatBox } from "../components/ChatBox"
+import { ChatBox } from "../components/Chat/ChatBox"
 
 const Contact = () => {
   return (

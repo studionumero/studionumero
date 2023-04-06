@@ -10,11 +10,11 @@ interface ButtonProps {
   onClick?: React.MouseEventHandler;
 }
 
-interface GetMessagesButtonProps {
+interface ChatButtonProps {
   text: string;
   reply?: string;
   options?: any;
   formProps?: any;
 }
 
-export type { MessageProps, ButtonProps, GetMessagesButtonProps }
+export type { MessageProps, ButtonProps, ChatButtonProps }
