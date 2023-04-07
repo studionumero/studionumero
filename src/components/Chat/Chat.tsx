@@ -1,5 +1,7 @@
-import { useEffect, useRef } from "react";
-import { ChatTransition } from "../../hooks/useChatTransition";
+import { useEffect, useRef, useState } from "react";
+// import { ChatTransition } from "../../hooks/useChatTransition";
+
+import { motion, AnimatePresence } from "framer-motion"
 
 const Chat = ({ messages, buttons }: any) => {
   const scrollRef = useRef<null | HTMLDivElement>(null);
@@ -19,16 +21,18 @@ const Chat = ({ messages, buttons }: any) => {
 }
 
 const Messages = ({ messages }: any) => {
-  const bubbleRef = useRef(null);
-  const messageRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    ChatTransition({ bubbleRef, messageRef });
-  }, [messages])
+  setTimeout(() => {
+    setIsVisible(false);
+  }, 1100);
 
-  const Bubble = ({ children, myRef, classname }: any) => (
-    <div
-      ref={myRef}
+  const Bubble = ({ children, classname, animate, initial, transition, exit }: any) => (
+    <motion.div
+      animate={animate}
+      initial={initial}
+      transition={transition}
+      exit={exit}
       className={`flex whitespace-pre
         bg-black text-white
         w-max p-4 rounded-3xl
@@ -36,28 +40,56 @@ const Messages = ({ messages }: any) => {
       `}
     >
       {children}
-    </div>
+    </motion.div>
   )
 
   return messages.map((item: any, index: number) => {
-    if (item.classname === "self-end") {
-      return (
-        <div key={index} className={item.classname}>
-          <Bubble>
-            <p>{item.text}</p>
-          </Bubble>
-        </div>
-      )
-    } else return (
-      <div key={index}>
-        <Bubble myRef={bubbleRef} classname="h-14 typing-indicator">
-          <span /><span /><span />
-        </Bubble>
-        <Bubble myRef={messageRef} classname={item.classname}>
-          <p>{item.text}</p>
-        </Bubble>
-      </div>
-    )
+
+
+    switch (true) {
+      case (item.classname === "self-end"):
+        return (
+          <div key={index} className={item.classname}>
+            <Bubble
+              animate={{ opacity: 1 }}
+              transition={{ ease: "linear", duration: 0.1 }}
+            >
+              <p>{item.text}</p>
+            </Bubble>
+          </div>
+        )
+      case (!item.classname):
+        return (
+          <div key={index} className="bubble-container mt-4">
+            <AnimatePresence>
+              {isVisible &&
+                <Bubble
+                  initial={{ opacity: 0.25 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ ease: "linear", duration: 0.15 }}
+                  classname="h-14 typing-indicator"
+                >
+                  <span /><span /><span />
+                </Bubble>
+              }
+            </AnimatePresence>
+            {/* Message */}
+            {!isVisible &&
+              <Bubble
+                classname={item.classname}
+                initial={{ opacity: 0.75 }}
+                animate={{ opacity: 1 }}
+                transition={{ ease: "easeOut", duration: 0.1 }}
+              >
+                <p>{item.text}</p>
+              </Bubble>
+            }
+          </div>
+        )
+      default:
+        return null;
+    }
   })
 };
 

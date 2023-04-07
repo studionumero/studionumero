@@ -20,10 +20,12 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
         ]));
         await delay(500);
         // Set zero response
-        setMessages((currValue: any) => ([
-          ...currValue,
-          response({ text: reply }).zero
-        ]));
+        if (reply) {
+          setMessages((currValue: any) => ([
+            ...currValue,
+            response({ text: reply }).zero
+          ]));
+        }
         // Set new buttons if applicable
         if (options) {
           await delay(1000);
@@ -54,7 +56,6 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
       zero: {
         type: "bubble",
         text: text,
-        classname: "hidden"
       }
     }
 
@@ -125,7 +126,7 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
                 text: "No",
                 reply: `Name: ${formData.name}\nEmail: ${formData.email}\nIs this correct?`,
                 options: [
-                  messageSentButton,
+                  messageSentButton(),
                   Button({
                     text: "No",
                     reply: "Oh, I'm sorry! Please tell me where the issue is:"
@@ -149,13 +150,11 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
           response({ text: `${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          messageSentButton,
-          // Don't modify
-          {
-            type: "button",
+          messageSentButton(),
+          Button({
             text: "No",
-            onClick: () => setFormData({ ...formData, loop: true, status: "loop" })
-          },
+            formProps: { ...formData, loop: true, status: "loop" }
+          })
         ]));
         break;
       default:
@@ -169,7 +168,6 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
       case (formData.status === "loop"):
         setMessages((currValue: any) => ([
           ...currValue,
-          response({ text: "No" }).user,
           response({ text: "Oh, I'm sorry! Please tell me where the issue is" }).zero
         ]));
         setButtons([
@@ -199,7 +197,7 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
           response({ text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          messageSentButton,
+          messageSentButton(),
           Button({
             text: "No",
             formProps: { ...formData, status: "loop" }
@@ -215,7 +213,7 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
           response({ text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          messageSentButton,
+          messageSentButton(),
           Button({
             text: "No",
             formProps: { ...formData, status: "loop" }
@@ -231,7 +229,7 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
           response({ text: `Thank you for your input.\n${formData.name}\n${formData.email}\n${formData.message}\nIs this correct?` }).zero
         ]));
         setButtons(() => ([
-          messageSentButton,
+          messageSentButton(),
           Button({
             text: "No",
             formProps: { ...formData, status: "loop" }

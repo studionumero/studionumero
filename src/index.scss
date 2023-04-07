@@ -12,15 +12,14 @@ code {
     monospace;
 }
 
-/* TYPING TRANSITION */
-.transition {
-  opacity: 0;
-  background-color: black;
+.bubble-container {
+  display: grid;
+  grid-template-columns: 1fr;
 }
 
-.transition.change {
-  opacity: 1;
-  transition: ease-in 1s;
+.bubble-container div {
+ grid-row-start: 1;
+ grid-column-start: 1;
 }
 
 /* TYPING INDICATOR */

@@ -7,7 +7,7 @@ const ChatTransition = ({ bubbleRef, messageRef }: any) => {
       bubble.classList.add('opacity-0');
 
       bubble.addEventListener('transitionend', () => {
-        bubble.style.display = 'none';
+        // bubble.style.display = 'none';
         bubble.classList.add('hidden');
         
         message.classList.remove('hidden');
@@ -15,7 +15,7 @@ const ChatTransition = ({ bubbleRef, messageRef }: any) => {
       }, {
         capture: false,
         once: true,
-        passive: false
+        passive: true
       });
     }
   }
