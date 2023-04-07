@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-// import { ChatTransition } from "../../hooks/useChatTransition";
 
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -20,76 +19,77 @@ const Chat = ({ messages, buttons }: any) => {
   )
 }
 
-const Messages = ({ messages }: any) => {
+const Bubble = ({ children, classname, animate, initial, transition, exit }: any) => (
+  <motion.div
+    animate={animate}
+    initial={initial}
+    transition={transition}
+    exit={exit}
+    className={`flex whitespace-pre
+      bg-black text-white
+      w-max p-4 rounded-3xl
+      ${classname}
+    `}
+  >
+    {children}
+  </motion.div>
+)
+
+const BubbleWrapper = (props: any) => {
+  const { item } = props;
   const [isVisible, setIsVisible] = useState(true);
 
-  setTimeout(() => {
-    setIsVisible(false);
-  }, 1100);
+  useEffect(() => {
+    let isMounted = true;
 
-  const Bubble = ({ children, classname, animate, initial, transition, exit }: any) => (
-    <motion.div
-      animate={animate}
-      initial={initial}
-      transition={transition}
-      exit={exit}
-      className={`flex whitespace-pre
-        bg-black text-white
-        w-max p-4 rounded-3xl
-        ${classname}
-      `}
-    >
-      {children}
-    </motion.div>
-  )
+    setTimeout(() => {
+      // Do not call state changes on unmounted components
+      if (!isMounted) return;
+      setIsVisible(false);
+    }, 1000);
 
-  return messages.map((item: any, index: number) => {
-
-
-    switch (true) {
-      case (item.classname === "self-end"):
-        return (
-          <div key={index} className={item.classname}>
-            <Bubble
-              animate={{ opacity: 1 }}
-              transition={{ ease: "linear", duration: 0.1 }}
-            >
-              <p>{item.text}</p>
-            </Bubble>
-          </div>
-        )
-      case (!item.classname):
-        return (
-          <div key={index} className="bubble-container mt-4">
-            <AnimatePresence>
-              {isVisible &&
-                <Bubble
-                  initial={{ opacity: 0.25 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ ease: "linear", duration: 0.15 }}
-                  classname="h-14 typing-indicator"
-                >
-                  <span /><span /><span />
-                </Bubble>
-              }
-            </AnimatePresence>
-            {/* Message */}
-            {!isVisible &&
-              <Bubble
-                classname={item.classname}
-                initial={{ opacity: 0.75 }}
-                animate={{ opacity: 1 }}
-                transition={{ ease: "easeOut", duration: 0.1 }}
-              >
-                <p>{item.text}</p>
-              </Bubble>
-            }
-          </div>
-        )
-      default:
-        return null;
+    return () => {
+      isMounted = false;
     }
+  }, []);
+
+  if (isVisible) return (
+    <AnimatePresence>
+      <Bubble
+        initial={{ opacity: 0.25 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ ease: "linear", duration: 0.15 }}
+        classname="h-14 typing-indicator"
+      >
+        <span /><span /><span />
+      </Bubble >
+    </AnimatePresence >
+  ); else return (
+    <Bubble
+      classname={item.classname}
+      initial={{ opacity: 0.75 }}
+      animate={{ opacity: 1 }}
+      transition={{ ease: "easeOut", duration: 0.1 }}
+    >
+      <p>{item.text}</p>
+    </Bubble>
+  )
+}
+
+const Messages = ({ messages }: any) => {
+  return messages.map((item: any, index: number) => {
+    if (item.from === "user") return (
+      <div key={index} className="self-end">
+        <Bubble>
+          <p>{item.text}</p>
+        </Bubble>
+      </div>
+    ); else if (item.from === "zero") return (
+      <div key={index} className="bubble-container mt-4">
+        <BubbleWrapper item={item} />
+      </div>
+    )
   })
 };
 

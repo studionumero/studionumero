@@ -51,11 +51,12 @@ const UseChat = async ({ messages, setMessages, setButtons, setFormData, formDat
       user: {
         type: "bubble",
         text: text,
-        classname: "self-end"
+        from: "user"
       },
       zero: {
         type: "bubble",
         text: text,
+        from: "zero"
       }
     }
 
