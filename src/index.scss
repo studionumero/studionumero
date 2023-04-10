@@ -45,7 +45,7 @@ code {
 
     @for $i from 1 through 3 {
       &:nth-of-type(#{$i}) {
-        animation: 1s blink infinite ($i * .3333s);
+        animation: 0.5s blink infinite ($i * .1666s);
       }
     }
   }

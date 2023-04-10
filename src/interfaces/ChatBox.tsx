@@ -12,9 +12,11 @@ interface ButtonProps {
 
 interface ChatButtonProps {
   text: string;
-  reply?: string;
+  reply?: any[];
+  // reply2?: string;
   options?: any;
   formProps?: any;
+  clear?: boolean;
 }
 
 export type { MessageProps, ButtonProps, ChatButtonProps }

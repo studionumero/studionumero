@@ -25,9 +25,10 @@ const Bubble = ({ children, classname, animate, initial, transition, exit }: any
     initial={initial}
     transition={transition}
     exit={exit}
-    className={`flex whitespace-pre
+    className={`flex 
       bg-black text-white
-      w-max p-4 rounded-3xl
+      max-w-[75%] w-fit 
+      whitespace-pre-wrap p-4 rounded-3xl
       ${classname}
     `}
   >
@@ -46,7 +47,7 @@ const BubbleWrapper = (props: any) => {
       // Do not call state changes on unmounted components
       if (!isMounted) return;
       setIsVisible(false);
-    }, 1000);
+    }, 1100);
 
     return () => {
       isMounted = false;
@@ -56,11 +57,11 @@ const BubbleWrapper = (props: any) => {
   if (isVisible) return (
     <AnimatePresence>
       <Bubble
+        classname="h-14 typing-indicator"
         initial={{ opacity: 0.25 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ ease: "linear", duration: 0.15 }}
-        classname="h-14 typing-indicator"
       >
         <span /><span /><span />
       </Bubble >
@@ -80,16 +81,16 @@ const BubbleWrapper = (props: any) => {
 const Messages = ({ messages }: any) => {
   return messages.map((item: any, index: number) => {
     if (item.from === "user") return (
-      <div key={index} className="self-end">
+      <div key={index} className="grid justify-items-end w-full">
         <Bubble>
-          <p>{item.text}</p>
+          {item.text}
         </Bubble>
       </div>
     ); else if (item.from === "zero") return (
       <div key={index} className="bubble-container mt-4">
         <BubbleWrapper item={item} />
       </div>
-    )
+    ); else return null;
   })
 };
 

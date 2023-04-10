@@ -14,6 +14,7 @@ const ChatBox = () => {
     status: "",
     toggle: false,
     loop: false,
+    clear: false,
   });
 
   console.log(messages);
