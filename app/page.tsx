@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { Logo } from "./components/logo"
+
 export default function Home() {
   return (
     <div className="flex flex-col gap-y-20 p-4 xl:p-0 xl:gap-y-40 xl:w-[880px]">
@@ -78,7 +80,8 @@ const Header = () => {
             <strong className="font-normal uppercase text-4xl leading-[44px] xl:text-[45px] xl:leading-[52px]">COMMUNITY.</strong><br />
           </div>
         </div>
-        <div className="justify-self-end h-[111px] w-[111px] xl:col-span-2 xl:justify-self-start xl:h-[141px] xl:w-[141px] relative">
+        <Logo />
+        {/* <div className="justify-self-end h-[111px] w-[111px] xl:col-span-2 xl:justify-self-start xl:h-[141px] xl:w-[141px] relative">
           <Image
             src="/0_.svg"
             alt=":0"
@@ -88,7 +91,7 @@ const Header = () => {
             unoptimized
             draggable="false"
           />
-        </div>
+        </div> */}
       </div>
     </header>
   )
