@@ -123,7 +123,7 @@ const Figure = () => {
             />
           </div>
           <div className="xl:grid xl:col-span-4 xl:grid-cols-4 xl:grid-col-rows-2">
-            <h3 className="hidden text-xl mb-[26px] xl:text-[28px] xl:leading-[38px] xl:col-span-4">We make small steps <br />to build a big dream.</h3>
+            <h3 className="hidden xl:grid text-xl mb-[26px] xl:text-[28px] xl:leading-[38px] xl:col-span-4">We make small steps <br />to build a big dream.</h3>
             <figcaption className="tracking-[.25px] xl:hidden">We started as two friends doing <br />our best to survive.</figcaption>
             <figcaption className="tracking-[.25px] hidden xl:text-sm xl:flex xl:self-end xl:whitespace-nowrap xl:col-span-2">We started as two friends doing our best <br />to survive.</figcaption>
           </div>
