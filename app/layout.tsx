@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`bg-surface xl:pt-24 ${roboto.className}`} >
+      <body className={`bg-surface text-on-surface xl:pt-24 ${roboto.className}`} >
         <h1 className="hidden xl:flex uppercase font-black xl:ml-[72px] text-sm mb-4 absolute">STUDIO<br />NUMERO</h1>
         <div className="flex flex-col xl:ml-[72px] xl:mr-[72px] xl:items-center">
           {children}
