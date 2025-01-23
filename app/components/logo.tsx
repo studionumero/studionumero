@@ -15,7 +15,7 @@ export const Logo = () => {
   }
 
   return (
-    <button className="justify-self-end h-[111px] w-[111px] xl:col-span-2 xl:justify-self-start xl:h-[141px] xl:w-[141px] relative"
+    <button className="cursor-default justify-self-end h-[111px] w-[111px] xl:col-span-2 xl:justify-self-start xl:h-[141px] xl:w-[141px] relative"
       onClick={handleClick}
     >
       <Image
